@@ -1,8 +1,18 @@
 '''
 Author: Soni, Jigar
 Email: jigardhaval8@gmail.com
+Documentation: jigardhaval8.wordpress.com
+
+Steps:
+Windows System with Internet Connection, Python installed
+Copy this script on your machine
+Open CMD to this path
+type python stock_tracker_cmd.py 
+and follow instructions on script
 '''
 import os
+
+from numpy import set_string_function
 try:
     from yahoo_fin import stock_info
 except:
@@ -53,9 +63,21 @@ except:
         os.system('clear')
     except:
         pass
-print(BOLD + '|   Live Stock Tracker | Triggers Alarm when stock price reach threshold & beyond |' + ECLR)
-print('{:10s} {:10s} {:12s} {:12s} '.format(B_BLACK_T_YELLOW + '{:10s}'.format(str('Time')) + ECLR, BOLD + '{:10s}'.format(stock_name) + ECLR,  B_BLACK_T_GREEN + '{:12s}'.format('BUY:'+str(low_buy_limit)) + ECLR, B_BLACK_T_GREEN + '{:12s}'.format('SELL:'+str(high_sell_limit)) + ECLR))
-print('------------------------------------------------------------------')
+try:
+    stock_details = stock_info.get_quote_data(stock_name)
+    shortname = str(stock_details['shortName'])
+    print(BOLD + '|   Tracking ' + B_BLACK_T_GREY + str(shortname) + ECLR + BOLD + ' Stock Live ' + ECLR)
+    prev_close_price = stock_details['regularMarketPreviousClose']
+    market_open_price = stock_details['regularMarketOpen']
+    # print("Name: " + shortname)
+    print(BOLD + "| Prev Close: " + str(prev_close_price)  +" - Today Open: " + str(market_open_price)+ECLR)
+
+except:
+    print(BOLD + '|   Tracking ' + B_BLACK_T_GREY + str(stock_name) + ECLR + BOLD + ' Stock Live ' + ECLR)
+
+print('-----------------------------------------------------------')
+print('{:10s} {:10s} {:12s} {:12s} {:5s}'.format(B_BLACK_T_YELLOW + '{:10s}'.format(str('Time')) + ECLR, BOLD + '{:10s}'.format(stock_name) + ECLR,  B_BLACK_T_GREEN + '{:12s}'.format('BUY:'+str(low_buy_limit)) + ECLR, B_BLACK_T_GREEN + '{:12s}'.format('SELL:'+str(high_sell_limit)) + ECLR, BOLD + '{:5s}'.format(str('Delta')+ECLR)))
+print('-----------------------------------------------------------')
 hitflag=0
 while(1):
     time.sleep(0.1)
@@ -67,6 +89,11 @@ while(1):
         print(B_BLACK_T_RED + 'Stock Doesnt Exists or code entered is incorrect! check for stock code at https://finance.yahoo.com' + ECLR)
         print('Also this script require Internet connection')
         exit(1)
+    delta=round(price-market_open_price,2)
+    if(delta>=0):
+        delta_s = B_BLACK_T_GREEN + '{:5s}'.format('+' + str(delta)) + ECLR
+    else:
+        delta_s = B_BLACK_T_RED + '{:5s}'.format(str(delta)) + ECLR
     price_string = str(round(price,4))
     # Current_stock.set(price)
     # print( "| " + str(time_string) + "| " + str(stock_name) + " : " + str(round(price,4)))
@@ -94,5 +121,5 @@ while(1):
         high_value_counter_s = BOLD + '{:12s}'.format(str(high_value_counter)) + ECLR
         price_string = BOLD  + '{:12s}'.format(price_string) + ECLR
 
-    print('{:10s} {:10s} {:12s} {:^12s} \r'.format(B_BLACK_T_YELLOW + '{:10s}'.format(str(time_string)) + ECLR, price_string,  str(low_value_counter_s), str(high_value_counter_s)), end="")
+    print('{:10s} {:10s} {:12s} {:^12s} {:5s} \r'.format(B_BLACK_T_YELLOW + '{:10s}'.format(str(time_string)) + ECLR, price_string,  str(low_value_counter_s), str(high_value_counter_s), str(delta_s)), end="")
     sys.stdout.flush()
