@@ -6,8 +6,11 @@ Email: jigardhaval8@gmail.com
 Documentation: jigardhaval8.wordpress.com
 '''
 import os
-
-from numpy import set_string_function
+try:
+    from numpy import set_string_function
+except:
+    os.system('pip3 install numpy')
+    from numpy import set_string_function
 try:
     from yahoo_fin import stock_info
 except:
@@ -18,9 +21,18 @@ import time
 from datetime import datetime
 import winsound
 import sys
-import configparser
-import json
-import matplotlib.pyplot as plt
+try:
+    import configparser
+except:
+    os.system('pip3 install configparser')
+    import configparser
+
+try:
+    import json
+except:
+    os.system('pip3 install json')
+    import json
+# import matplotlib.pyplot as plt
 
 config = configparser.ConfigParser()
 config.read('portfolio.cfg')
